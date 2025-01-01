@@ -38,9 +38,113 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
+//class Solution {
+//    public String removeKdigits(String num, int k) {
+//        int len = num.length();
+//        if (len<=k){
+//            return "0";
+//        } else if (len==1) {
+//            return num;
+//        }
+//        StringBuilder sb = new StringBuilder(num);
+//        int cur = 0;
+//        while (k>0 && cur+1<sb.length()){
+//            int c = sb.charAt(cur);
+//            int next = sb.charAt(cur+1);
+//            if (c>next){
+//                sb.deleteCharAt(cur);
+//                if (cur>0){
+//                    cur--;
+//                }
+//                k--;
+//            }else {
+//                cur++;
+//            }
+//        }
+//
+//        if (k>0){
+//            len = sb.length();
+//            sb.delete(len-k, len);
+//        }
+//
+//        int zeroFirstCount = 0;
+//        for (int i = 0; i < sb.length(); i++) {
+//            if (sb.charAt(i)!='0'){
+//                break;
+//            }
+//            zeroFirstCount++;
+//        }
+//
+//        if (zeroFirstCount==sb.length()){
+//            return "0";
+//        }else{
+//            return sb.delete(0, zeroFirstCount).toString();
+//        }
+//
+//    }
+//}
+
 class Solution {
     public String removeKdigits(String num, int k) {
-        
+        if (num.length() <= k) {
+            return "0";
+        }
+        StringBuilder ans = new StringBuilder(num.length() - k);
+        ans.append((char) ('0' - 1));   // min flag
+
+        int visitedCount = 0;
+        for (var c : num.toCharArray()) {
+            while (k>0){
+                char last = getLast(ans);
+                if (last <= c) {
+                    break;
+                }
+                removeLast(ans);
+                k--;
+            }
+
+            visitedCount++;
+            ans.append(c);
+            if (k <= 0) {
+                break;
+            }
+        }
+
+        ans.deleteCharAt(0); // del flag
+        if (k == 0) {
+            if (visitedCount < num.length()) {
+                ans.append(num.substring(visitedCount));
+            }
+        } else if (ans.length() > k) {
+            ans.delete(ans.length() - k, ans.length());
+        }
+
+        int zeroCount = 0;
+        while (zeroCount<ans.length()){
+            if (ans.charAt(zeroCount)!='0'){
+                break;
+            }
+
+            zeroCount++;
+        }
+
+        if (zeroCount>0){
+            ans.delete(0, zeroCount);
+        }
+        if (ans.isEmpty()){
+            return "0";
+        }
+        return ans.toString();
+    }
+
+    private char getLast(StringBuilder sb) {
+        return sb.charAt(sb.length() - 1);
+    }
+
+    private void removeLast(StringBuilder sb) {
+        sb.deleteCharAt(sb.length() - 1);
     }
 }
+
+
 //leetcode submit region end(Prohibit modification and deletion)
