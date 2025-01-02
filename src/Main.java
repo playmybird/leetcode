@@ -1,39 +1,26 @@
 class Solution {
-    public int trap(int[] height) {
-        int[] left = new int[height.length];
+    public int maxArea(int[] height) {
+        int l = 0;
+        int r = height.length - 1;
         int max = 0;
-        for (int i = 0; i < height.length; i++) {
-            if (height[max] < height[i]) {
-                max = i;
-                left[i] = height[i];
+
+        while (l < r) {
+            int h = Math.min(height[l], height[r]);
+            max = Math.max((r - l) * h, max);
+
+            if (height[l] < height[r]) {
+                int t = height[l];
+                while (l < r && height[l] <= t) {
+                    l++;
+                }
             } else {
-                left[i] = height[max];
+                int t = height[r];
+                while (l < r && height[r] <= t) {
+                    r--;
+                }
             }
         }
 
-        int[] right = new int[height.length];
-        max = height.length - 1;
-        for (int i = height.length - 1; i >= 0; i--) {
-            if (height[max] < height[i]) {
-                max = i;
-                right[i] = height[i];
-            } else {
-                right[i] = height[max];
-            }
-        }
-
-        int ans = 0;
-        for (int i = 1; i < height.length - 1; i++) {
-            int water = Math.min(left[i], right[i]);
-            if (water > height[i]) {
-                ans += water - height[i];
-            }
-        }
-        return ans;
-    }
-
-
-    public static void main(String[] args) {
-        System.out.println(new Solution().trap(new int[]{4, 2, 0, 3, 2, 5}));
+        return max;
     }
 }
