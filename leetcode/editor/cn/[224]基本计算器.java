@@ -43,9 +43,88 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
+import java.util.ArrayList;
+import java.util.List;
+
 class Solution {
     public int calculate(String s) {
-        
+        if (s.isEmpty()) {
+            return 0;
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        List<Character> flags = new ArrayList<>();
+        boolean isNumber = false;
+        boolean firstFlag = true;
+        int op = 0;
+
+        for (var c : s.toCharArray()) {
+            switch (c) {
+                case '+', '-':
+                    if (isNumber) {
+                        ans.add(op);
+                        op = 0;
+                        isNumber = false;
+                    } else if (firstFlag) {
+                        ans.add(0);
+                    }
+
+                    firstFlag = false;
+                    sumOrSub(ans, flags);
+                    flags.add(c);
+                    break;
+
+                case '(':
+                    firstFlag = true;
+                    flags.add(c);
+                    break;
+
+                case ' ':
+                    break;
+
+                case ')':
+                    if (isNumber) {
+                        ans.add(op);
+                        op = 0;
+                        isNumber = false;
+                    }
+                    sumOrSub(ans, flags);
+                    flags.removeLast();
+                    sumOrSub(ans, flags);
+                    break;
+
+                default:
+                    isNumber = true;
+                    firstFlag = false;
+                    op = op * 10 + c - '0';
+            }
+        }
+
+        if (isNumber) {
+            ans.add(op);
+            sumOrSub(ans, flags);
+        }
+        return ans.getLast();
+    }
+
+    private void sumOrSub(List<Integer> num, List<Character> flags) {
+        if (flags.isEmpty() || flags.getLast() == '(') {
+            return;
+        }
+
+        var op2 = num.removeLast();
+        var op1 = num.removeLast();
+        var f = flags.removeLast();
+        if (f == '+') {
+            num.add(op1 + op2);
+        } else {
+            num.add(op1 - op2);
+        }
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(new Solution().calculate("(1+(-4+5+2)-3)+(6+8)"));
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
