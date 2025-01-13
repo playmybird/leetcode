@@ -1,26 +1,40 @@
 class Solution {
-    final int defaultMin = -1000;
-    private int max = defaultMin;
+    private boolean hasFind = false;
 
-    public int maxPathSum(TreeNode root) {
-        postOrder(root);
-        return max;
-    }
-
-    private int postOrder(TreeNode root) {
-        if (root == null) {
-            return defaultMin;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (hasFind) {
+            return null;
         }
 
-        int l = postOrder(root.left);
-        int r = postOrder(root.right);
+        if (root == null) {
+            return null;
+        }
 
-        var pathMax = Math.max(root.val, root.val + Math.max(l, r));
-        max = Math.max(max, Math.max(pathMax, root.val + l + r));
-        return pathMax;
-    }
+        TreeNode l = lowestCommonAncestor(root.left, p, q);
+        if (hasFind){
+            return l;
+        }
+        TreeNode r = lowestCommonAncestor(root.right, p, q);
+        if (hasFind){
+            return r;
+        }
 
-    public static void main(String[] args) {
-        System.out.println(new Solution().maxPathSum(new TreeNode(1, new TreeNode(2), null)));
+        if (l != null && r != null) {
+            hasFind = true;
+            return root;
+        } else if (l != null || r != null) {
+            hasFind = root.val == p.val || root.val == q.val;
+            if (hasFind){
+                return root;
+            }else{
+                return l != null ? l : r;
+            }
+        }
+
+        if (root.val == p.val || root.val == q.val) {
+            return root;
+        } else {
+            return null;
+        }
     }
 }
