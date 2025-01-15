@@ -1,40 +1,23 @@
 class Solution {
-    private boolean hasFind = false;
+    TreeNode lastVisitNode = null;
 
-    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        if (hasFind) {
-            return null;
-        }
-
+    public boolean isValidBST(TreeNode root) {
         if (root == null) {
-            return null;
+            return true;
         }
 
-        TreeNode l = lowestCommonAncestor(root.left, p, q);
-        if (hasFind){
-            return l;
-        }
-        TreeNode r = lowestCommonAncestor(root.right, p, q);
-        if (hasFind){
-            return r;
+        boolean ans = isValidBST(root.left);
+        if (!ans) {
+            return false;
         }
 
-        if (l != null && r != null) {
-            hasFind = true;
-            return root;
-        } else if (l != null || r != null) {
-            hasFind = root.val == p.val || root.val == q.val;
-            if (hasFind){
-                return root;
-            }else{
-                return l != null ? l : r;
+        if (lastVisitNode != null) {
+            if (!(lastVisitNode.val < root.val)) {
+                return false;
             }
         }
+        lastVisitNode = root;
 
-        if (root.val == p.val || root.val == q.val) {
-            return root;
-        } else {
-            return null;
-        }
+        return isValidBST(root.right);
     }
 }
