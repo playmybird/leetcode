@@ -1,34 +1,37 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 class Solution {
-    public List<List<Integer>> combine(int n, int k) {
-        List<Integer> stack = new ArrayList<>(k);
-        List<List<Integer>> ans = new ArrayList<>();
-        dfs(1, n, k, stack, ans);
-        return ans;
-    }
-
-    private void dfs(int start, int end, int k, List<Integer> stack, List<List<Integer>> ans){
-        if (end-start+1<k){
-            return;
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists==null||lists.length==0){
+            return null;
         }
 
-        k--;
-        for (int i = start; i <= end; i++) {
-            stack.add(i);
-            if (k==0){
-                ans.add(new ArrayList<>(stack));
-                stack.removeLast();
-                continue;
+        ListNode head = new ListNode();
+        ListNode insertNode = head;
+        PriorityQueue<ListNode> minHeap = new PriorityQueue<>(lists.length, Comparator.comparingInt(o -> o.val));
+        Arrays.stream(lists).forEach(node -> {
+            if (node == null) {
+                return;
             }
+            minHeap.add(node);
+        });
 
-            dfs(i+1, end, k, stack, ans);
-            stack.removeLast();
+        while (!minHeap.isEmpty()) {
+            var minList = minHeap.poll();
+            insertNode.next = minList;
+            insertNode = minList;
+            minList = minList.next;
+            if (minList != null) {
+                minHeap.add(minList);
+            }
         }
-    }
 
-    public static void main(String[] args) {
-        System.out.println(new Solution().combine(4, 2));
+        insertNode.next = null;
+        return head.next;
     }
 }
