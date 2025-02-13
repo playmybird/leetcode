@@ -40,8 +40,53 @@
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+    class Index {
+        int[] num1;
+        int p1;
+
+        public Index(int[] num1, int[] num2) {
+            this.num1 = num1;
+            this.num2 = num2;
+        }
+
+        int[] num2;
+        int p2;
+
+
+        public int next() {
+            int ans = 0;
+            if (num1.length == p1) {
+                ans = num2[p2];
+                p2++;
+            } else if (num2.length == p2) {
+                ans = num1[p1];
+                p1++;
+            } else if (num1[p1] < num2[p2]) {
+                ans = num1[p1];
+                p1++;
+            } else {
+                ans = num2[p2];
+                p2++;
+            }
+            return ans;
+        }
+    }
+
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        
+        int count = nums1.length + nums2.length;
+        int move = (count - 1) / 2;
+        Index index = new Index(nums1, nums2);
+        while (move > 0) {
+            move--;
+            index.next();
+        }
+
+        double ans = index.next();
+        if (count % 2 == 0) {
+            ans += index.next();
+            ans /= 2;
+        }
+        return ans;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
